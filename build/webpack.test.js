@@ -1,4 +1,13 @@
+/**
+ * @Author: vickiWu
+ * @Date: 2022-02-18 10:04:00
+ * @LastEditTime: 2022-03-25 13:35:11
+ * @LastEditors: vickiWu
+ * @Description:项目未使用此打包配置，入口src/index.js,打包构建文件dist/app.js
+ * @FilePath: \element\build\webpack.test.js
+ */
 const path = require('path');
+
 const ProgressBarPlugin = require('progress-bar-webpack-plugin');
 const VueLoaderPlugin = require('vue-loader/lib/plugin');
 

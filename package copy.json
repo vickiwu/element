@@ -1,0 +1,156 @@
+{
+  "name": "element-ui",
+  "version": "2.15.7",
+  "description": "A Component Library for Vue.js.",
+  "main": "lib/element-ui.common.js",
+  "files": [
+    "lib",
+    "src",
+    "packages",
+    "types"
+  ],
+  "typings": "types/index.d.ts",
+  "scripts": {
+    "bootstrap": "yarn || npm i", // 下载包
+    "build:file": "node build/bin/iconInit.js & node build/bin/build-entry.js & node build/bin/i18n.js & node build/bin/version.js", //文件自动化生成
+    "build:theme": "node build/bin/gen-cssfile && gulp build --gulpfile packages/theme-chalk/gulpfile.js && cp-cli packages/theme-chalk/lib lib/theme-chalk", // 生成项目的主题和样式 cp-cli 包,用于文件和文件夹复制,无需担心跨平台问题。 
+    "build:utils": "cross-env BABEL_ENV=utils babel src --out-dir lib --ignore src/index.js", // 把 src 目录下除了 src/index.js 入口文件外的其他文件通过 babel 转译后，输出至 lib 文件夹下。 cross-env 包,是一款运行跨平台设置和使用环境变量的脚本，不同平台使用唯一指令，无需担心跨平台问题。
+    "build:umd": "node build/bin/build-locale.js", //生成 umd 格式的文件
+    "clean": "rimraf lib && rimraf packages/*/lib && rimraf test/**/coverage", // 清除打包、测试生成的目录文件  rimraf 包,用于递归删除目录所有文件
+    "deploy:build": "npm run build:file && cross-env NODE_ENV=production webpack --config build/webpack.demo.js && echo element.eleme.io>>examples/element-ui/CNAME", // 打包构建项目官网内容,为网站部署做准备
+    "deploy:extension": "cross-env NODE_ENV=production webpack --config build/webpack.extension.js", // 打包构建主题编辑器的 chorme 插件项目--Element Theme Roller
+    "dev:extension": "rimraf examples/extension/dist && cross-env NODE_ENV=development webpack --watch --config build/webpack.extension.js",
+    "dev": "npm run bootstrap && npm run build:file && cross-env NODE_ENV=development webpack-dev-server --config build/webpack.demo.js & node build/bin/template.js", // 运行组件库的本地开发环境 webpack-dev-server具有 live reloading功能,网站内容会实时重新加载
+    "dev:play": "npm run build:file && cross-env NODE_ENV=development PLAY_ENV=true webpack-dev-server --config build/webpack.demo.js", // 组件库开发中的功能展示
+    "dist": "npm run clean && npm run build:file && npm run lint && webpack --config build/webpack.conf.js && webpack --config build/webpack.common.js && webpack --config build/webpack.component.js && npm run build:utils && npm run build:umd && npm run build:theme", // 构建组件库
+    "i18n": "node build/bin/i18n.js", // 基于 examples/i18n/page.json页面多语言配置和 examples/pages/template 目录下的所有模版文件，生成 zh-CN、en-US、es、fr-FR等四种语言的网站.vue文件。
+    "lint": "eslint src/**/* test/**/* packages/**/* build/**/* --quiet", // 代码质量检查 --quiet参数允报告错误,禁止报告警告。
+    // 执行命令 npm run pub 实现发布部署流程：
+    // 本地代码检查合并，push到远程分支；
+    // 组件构建发布(npm pulish)；
+    // 官网发布部署。
+    "pub": "npm run bootstrap && sh build/git-release.sh && sh build/release.sh && node build/bin/gen-indices.js", // 组件库的发布、代码管理
+    "test": "npm run lint && npm run build:theme && cross-env CI_ENV=/dev/ BABEL_ENV=test karma start test/unit/karma.conf.js --single-run", // 启动项目测试 设置了参数 --single-run 执行一次测试之后，karma 会自动停掉。
+    // karma测试执行过程管理工具(Test Runner)
+    // Mocha 是运行在 Node.js 和浏览器上的功能丰富的 JavaScript 测试框架。
+    // Chai 是一个用于 Node.js 和浏览器的 BDD/TDD 断言库，可以与任何 JavaScript 测试框架便捷配对。
+    // Sinon.JS 用于对 JavaScript 隔离测试 spy, stub 和 mock。适用于任何单元测试框架。
+    "test:watch": "npm run build:theme && cross-env BABEL_ENV=test karma start test/unit/karma.conf.js" // 启动项目测试，执行结束后会继续监测文件是否变更，若发生变更，会重新执行一次测试。
+  },
+  "faas": [
+    {
+      "domain": "element",
+      "public": "temp_web/element"
+    },
+    {
+      "domain": "element-theme",
+      "public": "examples/element-ui",
+      "build": [
+        "yarn",
+        "npm run deploy:build"
+      ]
+    }
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:ElemeFE/element.git"
+  },
+  "homepage": "http://element.eleme.io",
+  "keywords": [
+    "eleme",
+    "vue",
+    "components"
+  ],
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ElemeFE/element/issues"
+  },
+  "unpkg": "lib/index.js",
+  "style": "lib/theme-chalk/index.css",
+  "dependencies": {
+    "async-validator": "~1.8.1",
+    "babel-helper-vue-jsx-merge-props": "^2.0.0",
+    "deepmerge": "^1.2.0",
+    "normalize-wheel": "^1.0.1",
+    "resize-observer-polyfill": "^1.5.0",
+    "throttle-debounce": "^1.0.1"
+  },
+  "peerDependencies": {
+    "vue": "^2.5.17"
+  },
+  "devDependencies": {
+    "@vue/component-compiler-utils": "^2.6.0",
+    "algoliasearch": "^3.24.5",
+    "babel-cli": "^6.26.0",
+    "babel-core": "^6.26.3",
+    "babel-loader": "^7.1.5",
+    "babel-plugin-add-module-exports": "^0.2.1",
+    "babel-plugin-istanbul": "^4.1.1",
+    "babel-plugin-module-resolver": "^2.2.0",
+    "babel-plugin-syntax-jsx": "^6.18.0",
+    "babel-plugin-transform-vue-jsx": "^3.7.0",
+    "babel-preset-env": "^1.7.0",
+    "babel-preset-stage-2": "^6.24.1",
+    "babel-regenerator-runtime": "^6.5.0",
+    "chai": "^4.2.0",
+    "chokidar": "^1.7.0",
+    "copy-webpack-plugin": "^5.0.0",
+    "coveralls": "^3.0.3",
+    "cp-cli": "^1.0.2",
+    "cross-env": "^3.1.3",
+    "css-loader": "^2.1.0",
+    "es6-promise": "^4.0.5",
+    "eslint": "4.18.2",
+    "eslint-config-elemefe": "0.1.1",
+    "eslint-loader": "^2.0.0",
+    "eslint-plugin-html": "^4.0.1",
+    "eslint-plugin-json": "^1.2.0",
+    "file-loader": "^1.1.11",
+    "file-save": "^0.2.0",
+    "gulp": "^4.0.0",
+    "gulp-autoprefixer": "^6.0.0",
+    "gulp-cssmin": "^0.2.0",
+    "gulp-dart-sass": "^1.0.2",
+    "highlight.js": "^9.3.0",
+    "html-webpack-plugin": "^3.2.0",
+    "json-loader": "^0.5.7",
+    "json-templater": "^1.0.4",
+    "karma": "^4.0.1",
+    "karma-chrome-launcher": "^2.2.0",
+    "karma-coverage": "^1.1.2",
+    "karma-mocha": "^1.3.0",
+    "karma-sinon-chai": "^2.0.2",
+    "karma-sourcemap-loader": "^0.3.7",
+    "karma-spec-reporter": "^0.0.32",
+    "karma-webpack": "^3.0.5",
+    "markdown-it": "^8.4.1",
+    "markdown-it-anchor": "^5.0.2",
+    "markdown-it-chain": "^1.3.0",
+    "markdown-it-container": "^2.0.0",
+    "mini-css-extract-plugin": "^0.4.1",
+    "mocha": "^6.0.2",
+    "optimize-css-assets-webpack-plugin": "^5.0.1",
+    "postcss": "^7.0.14",
+    "progress-bar-webpack-plugin": "^1.11.0",
+    "rimraf": "^2.5.4",
+    "sass": "^1.34.0",
+    "sass-loader": "^10.1.1",
+    "select-version-cli": "^0.0.2",
+    "sinon": "^7.2.7",
+    "sinon-chai": "^3.3.0",
+    "style-loader": "^0.23.1",
+    "transliteration": "^1.1.11",
+    "uglifyjs-webpack-plugin": "^2.1.1",
+    "uppercamelcase": "^1.1.0",
+    "url-loader": "^1.0.1",
+    "vue": "2.5.21",
+    "vue-loader": "^15.7.0",
+    "vue-router": "^3.0.1",
+    "vue-template-compiler": "2.5.21",
+    "vue-template-es2015-compiler": "^1.6.0",
+    "webpack": "^4.14.0",
+    "webpack-cli": "^3.0.8",
+    "webpack-dev-server": "^3.1.11",
+    "webpack-node-externals": "^1.7.2"
+  }
+}

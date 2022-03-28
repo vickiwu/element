@@ -1,8 +1,17 @@
+/**
+ * @Author: vickiWu
+ * @Date: 2022-02-18 10:04:00
+ * @LastEditTime: 2022-03-25 11:24:41
+ * @LastEditors: vickiWu
+ * @Description:以 commonjs2 规范打包构建类库。
+ * @FilePath: \element\build\webpack.common.js
+ */
+// 执行打包webpack --config build/webpack.common.js,入口文件 src/index.js 以commonjs2格式输出到 lib/element-ui.common.js;
 const path = require('path');
-const ProgressBarPlugin = require('progress-bar-webpack-plugin');
+const ProgressBarPlugin = require('progress-bar-webpack-plugin'); // 构建进度条
 const VueLoaderPlugin = require('vue-loader/lib/plugin');
 
-const config = require('./config');
+const config = require('./config'); // webpack公共配置
 
 module.exports = {
   mode: 'production',
@@ -12,10 +21,10 @@ module.exports = {
   output: {
     path: path.resolve(process.cwd(), './lib'),
     publicPath: '/dist/',
-    filename: 'element-ui.common.js',
-    chunkFilename: '[id].js',
-    libraryExport: 'default',
-    library: 'ELEMENT',
+    filename: 'element-ui.common.js', // 打包构建的文件名
+    chunkFilename: '[id].js', // 按需加载的chunk文件
+    libraryExport: 'default', // 决定暴露的模块
+    library: 'ELEMENT', // 库的名称
     libraryTarget: 'commonjs2'
   },
   resolve: {
@@ -25,7 +34,7 @@ module.exports = {
   },
   externals: config.externals,
   performance: {
-    hints: false
+    hints: false // 不展示警告或错误信息
   },
   stats: {
     children: false

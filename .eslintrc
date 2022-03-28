@@ -3,10 +3,17 @@
     "ga": true,
     "chrome": true
   },
-  "plugins": ["html", "json"],
-  "extends": "elemefe",
+  "plugins": [
+    "html",
+    "json"
+  ],
+  "extends": "elemefe", // 使用自己封装的规则配置 eslint-config-elemefe
   "rules": {
-    "no-restricted-globals": ["error", "event", "fdescribe"]
+    "no-restricted-globals": [
+      "error",
+      "event",
+      "fdescribe"
+    ]
   },
   "parserOptions": {
     "ecmaVersion": 6,

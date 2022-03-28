@@ -1,3 +1,7 @@
+// 提供了两套打包配置，生产模式用于项目网站的构建，开发模式用于组件展示测试的构建。
+// 使用了CSS、JS构建的优化插件，还配置 splitChunks抽取公共模块解决重复引入第三方库的问题。
+// npm run deploy:build 命令打包构建项目网站。
+// webpack-dev-server 提供一个本地服务(serve) 并运行项目网站(打包规则配置如下）
 const path = require('path');
 const webpack = require('webpack');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
@@ -10,8 +14,8 @@ const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 
 const config = require('./config');
 
-const isProd = process.env.NODE_ENV === 'production';
-const isPlay = !!process.env.PLAY_ENV;
+const isProd = process.env.NODE_ENV === 'production'; // 基于 production 模式，打包生成内容输出至examples/element-ui/目录下。
+const isPlay = !!process.env.PLAY_ENV;// 由于配置了如下环境变量NODE_ENV=development PLAY_ENV=true,可以在build/webpack.demo.js打包文件中看到入口文件examples/play.js, play.js 引用  examples/play/index.vue, 可以引入组件库任意组件用于功能展示。
 
 const webpackConfig = {
   mode: process.env.NODE_ENV,
@@ -148,8 +152,11 @@ if (isProd) {
     new OptimizeCSSAssetsPlugin({})
   );
   // https://webpack.js.org/configuration/optimization/#optimizationsplitchunks
+  // 在多入口文件打包的时候，出现了重复引入第三方库的问题
+  // 使用splitChunks抽取公共模块
   webpackConfig.optimization.splitChunks = {
     cacheGroups: {
+      // 抽取来自node_modules文件夹下的第三方代码
       vendor: {
         test: /\/src\//,
         name: 'element-ui',

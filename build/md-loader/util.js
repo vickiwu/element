@@ -1,11 +1,19 @@
+/**
+ * @Author: vickiWu
+ * @Date: 2022-02-18 10:04:00
+ * @LastEditTime: 2022-03-25 11:09:53
+ * @LastEditors: vickiWu
+ * @Description:提供 stripScript stripStyle stripTemplate genInlineComponentText等方法用于页面内容提取和生成组件。
+ * @FilePath: \element\build\md-loader\util.js
+ */
 const { compileTemplate } = require('@vue/component-compiler-utils');
 const compiler = require('vue-template-compiler');
-
+// script内容获取
 function stripScript(content) {
   const result = content.match(/<(script)>([\s\S]+)<\/\1>/);
   return result && result[2] ? result[2].trim() : '';
 }
-
+// style内容获取
 function stripStyle(content) {
   const result = content.match(/<(style)\s*>([\s\S]+)<\/\1>/);
   return result && result[2] ? result[2].trim() : '';
@@ -26,7 +34,8 @@ function pad(source) {
     .map(line => `  ${line}`)
     .join('\n');
 }
-
+// 参考templateLoader.js 源码
+// 将自定义容器中的代码块（fence）转成一个个内联component注入到整个页面中
 function genInlineComponentText(template, script) {
   // https://github.com/vuejs/vue-loader/blob/423b8341ab368c2117931e909e2da9af74503635/lib/loaders/templateLoader.js#L46
   const finalOptions = {

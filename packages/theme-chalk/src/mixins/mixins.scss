@@ -1,7 +1,7 @@
 @import "function";
 @import "../common/var";
 
-/* Break-points
+/* Break-points @mixin 指令允许我们定义一个可以在整个样式表中重复使用的样式。     // @include 指令可以将混入（mixin）引入到文档中。
  -------------------------- */
 @mixin res($key, $map: $--breakpoints) {
   // 循环断点Map，如果存在则返回

@@ -1,4 +1,5 @@
 sudo: false
+# 运行环境
 language: node_js
 node_js: 10
 addons:
@@ -8,5 +9,6 @@ before_install:
 - export TRAVIS_COMMIT_USER="$(git log --no-merges -n 1 --format=%an)"
 - export TRAVIS_COMMIT_EMAIL="$(git log --no-merges -n 1 --format=%ae)"
 after_success:
+# 执行脚本 build test deploy
 - sh build/deploy-ci.sh
 - cat ./test/unit/coverage/lcov.info | ./node_modules/.bin/coveralls

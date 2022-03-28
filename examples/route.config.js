@@ -1,6 +1,7 @@
-import navConfig from './nav.config';
-import langs from './i18n/route';
+import navConfig from './nav.config.json'; // 左侧导航
+import langs from './i18n/route'; // 路由配置支持的语言
 
+// 加载网站多语言的vue文件
 const LOAD_MAP = {
   'zh-CN': name => {
     return r => require.ensure([], () =>
@@ -28,6 +29,7 @@ const load = function(lang, path) {
   return LOAD_MAP[lang](path);
 };
 
+// 加载网站组件文档多语言的md文件
 const LOAD_DOCS_MAP = {
   'zh-CN': path => {
     return r => require.ensure([], () =>
@@ -55,8 +57,10 @@ const loadDocs = function(lang, path) {
   return LOAD_DOCS_MAP[lang](path);
 };
 
+// 组件页面 路由注册
 const registerRoute = (navConfig) => {
   let route = [];
+
   Object.keys(navConfig).forEach((lang, index) => {
     let navs = navConfig[lang];
     route.push({
@@ -65,6 +69,7 @@ const registerRoute = (navConfig) => {
       component: load(lang, 'component'),
       children: []
     });
+    // 组件文档路由添加
     navs.forEach(nav => {
       if (nav.href) return;
       if (nav.groups) {
